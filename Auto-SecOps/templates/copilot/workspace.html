@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Analyst Copilot - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Analyst Copilot</h1>
+<p class="small">Deterministic decision support grounded in live SOC records. Recommendations never modify infrastructure and always require human approval.</p>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+<div class="card briefing-hero">
+  <h2>Shift briefing</h2>
+  <p>{{ briefing.headline }}</p>
+  <ul>{% for item in briefing.shift_summary %}<li>{{ item }}</li>{% endfor %}</ul>
+  <p class="small">Confidence: {{ briefing.confidence }} | Generated: {{ briefing.generated_at }}</p>
+</div>
+{% if can_manage_view %}
+<div class="card">
+  <h2>Ask the copilot</h2>
+  <form method="post" class="search-form">{% csrf_token %}
+    <input type="search" name="question" value="{{ question }}" placeholder="What should we prioritize? Show open incidents." aria-label="Copilot question">
+    <button type="submit">Ask</button>
+  </form>
+</div>
+{% endif %}
+{% if answer %}
+<div class="card">
+  <h2>{{ answer.intent }}</h2>
+  <p>{{ answer.answer }}</p>
+  <p class="small">Evidence items: {{ answer.evidence|length }}</p>
+</div>
+{% endif %}
+<div class="grid grid-2">
+  <div class="card">
+    <h2>Priority actions</h2>
+    {% for action in briefing.priority_actions %}
+    <div class="bar-row">
+      <span><span class="badge">{{ action.priority }}</span> <strong>{{ action.title }}</strong><br><span class="small">{{ action.rationale }}</span></span>
+    </div>
+    <p class="small">{{ action.recommended_action }} Human approval: {{ action.requires_human_approval }}</p>
+    {% empty %}<p class="small">No immediate actions.</p>{% endfor %}
+  </div>
+  <div class="card">
+    <h2>Watchlist</h2>
+    {% for item in briefing.watchlist %}
+    <div class="bar-row"><span><strong>{{ item.value }}</strong><br><span class="small">{{ item.type }} - {{ item.reason }}</span></span></div>
+    {% empty %}<p class="small">Watchlist is empty.</p>{% endfor %}
+    <h3>Forecast</h3>
+    <p>{{ briefing.forecast.current_score }} now → {{ briefing.forecast.projected_score }} projected ({{ briefing.forecast.trend }})</p>
+  </div>
+</div>
+<p class="small">{{ briefing.disclaimer }}</p>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Risk Fabric - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Risk Fabric <a class="small" href="/api/risk-fabric/attack-paths/">Attack Path API</a></h1>
+<p class="small">Live graph-style correlation of exposed assets, exploitable vulnerabilities, alerts, detections, and incidents. Scores are decision support only.</p>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+<div class="grid grid-2">
+  <div class="card">
+    <h2>Attack surface</h2>
+    <div class="inventory-grid">
+      <div class="inventory-item"><strong>{{ summary.assets }}</strong><span>assets</span></div>
+      <div class="inventory-item"><strong>{{ summary.internet_exposed_assets }}</strong><span>internet exposed</span></div>
+      <div class="inventory-item"><strong>{{ summary.open_vulnerabilities }}</strong><span>open vulnerabilities</span></div>
+      <div class="inventory-item"><strong>{{ summary.exploitable_vulnerabilities }}</strong><span>exploitable</span></div>
+      <div class="inventory-item"><strong>{{ summary.attack_paths }}</strong><span>attack paths</span></div>
+      <div class="inventory-item"><strong>{{ summary.critical_paths }}</strong><span>critical paths</span></div>
+    </div>
+    <p class="small">Severity: {{ summary.severity_distribution|default:"No active paths" }}</p>
+  </div>
+  <div class="card">
+    <h2>Risk forecast</h2>
+    <p><strong>{{ forecast.current_score }}</strong> now → <strong>{{ forecast.projected_score }}</strong> projected ({{ forecast.trend }})</p>
+    <div class="bar-row"><span>Confidence</span><div class="bar-track"><span class="bar-fill" style="width: {% widthratio forecast.confidence 1 100 %}%"></span></div><span>{{ forecast.confidence }}</span></div>
+    <ul>{% for driver in forecast.drivers %}<li>{{ driver }}</li>{% endfor %}</ul>
+    <p class="small">{{ forecast.method }}</p>
+  </div>
+</div>
+<h2>Prioritized attack paths</h2>
+{% for path in paths %}
+<div class="card path-card">
+  <div class="path-head">
+    <h3>{{ path.asset.hostname }} → {{ path.vulnerability.cve }}</h3>
+    <span class="badge">{{ path.severity }} {{ path.score }}</span>
+  </div>
+  <p class="small">{{ path.vulnerability.title }} | {{ path.vulnerability.severity }} | CVSS {{ path.vulnerability.cvss_score }} | likelihood {{ path.likelihood }} | impact {{ path.impact }}</p>
+  <div class="path-steps">
+    {% for step in path.steps %}<div class="path-step"><strong>{{ step.stage }}</strong><span>{{ step.detail }}</span></div>{% endfor %}
+  </div>
+  <p><strong>Entry:</strong> {{ path.entry_point }} {% if path.lateral_targets %}| <strong>Lateral targets:</strong> {{ path.lateral_targets|join:", " }}{% endif %}</p>
+  <p><strong>Evidence:</strong> {{ path.evidence.alert_ids|length }} alert(s), {{ path.evidence.hit_ids|length }} detection hit(s), {{ path.evidence.incident_ids|length }} incident(s), {{ path.evidence.indicator_values|length }} indicator(s)</p>
+  <p><strong>Recommended:</strong> {{ path.recommendation }}</p>
+</div>
+{% empty %}<div class="card empty-state">No active attack paths. Keep vulnerability status current to improve risk scoring.</div>{% endfor %}
+{% endblock %}

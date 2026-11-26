@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Security Operations Dashboard</h1>
+{% if organization_error %}
+<div class="notice">{{ organization_error }}</div>
+{% else %}
+<p class="small">Organization: {{ organization.name }} | Generated {{ metrics.generated_at }}</p>
+<section class="grid">
+  {% for key, value in metrics.cards.items %}
+  <div class="card kpi"><div class="value">{{ value }}</div><div class="label">{{ key|cut:"_" }}</div></div>
+  {% endfor %}
+</section>
+<div class="card">
+  <h2>Classification Model</h2>
+  <p><strong>Version:</strong> {{ model_info.model_version }} | <strong>Training examples:</strong> {{ model_info.training_examples }} | <strong>Vocabulary:</strong> {{ model_info.vocabulary_size }} | <strong>SHAP:</strong> {{ model_info.shap_enabled }}</p>
+  <p class="small">{{ model_info.disclaimer }}</p>
+</div>
+<div class="card">
+  <h2>Advanced Operations</h2>
+  <p class="small">Pivot into structured threat hunts, scored attack paths, and copilot briefings backed by live records.</p>
+  <p><a class="small" href="/hunting/">Open Threat Hunting</a> | <a class="small" href="/risk-fabric/">Explore Risk Fabric</a> | <a class="small" href="/copilot/">Ask Analyst Copilot</a></p>
+</div>
+<div class="grid">
+  <div class="card">
+    <h2>Category Distribution</h2>
+    {% for item in metrics.charts.categories %}<div class="bar-row"><span>{{ item.label }}</span><div class="bar-track"><div class="bar-fill" style="width: {{ item.percent }}%"></div></div><strong>{{ item.value }}</strong></div>{% empty %}<p class="small">No classifications yet.</p>{% endfor %}
+  </div>
+  <div class="card">
+    <h2>Alert Severity</h2>
+    {% for item in metrics.charts.severities %}<div class="bar-row"><span>{{ item.label }}</span><div class="bar-track"><div class="bar-fill" style="width: {{ item.percent }}%"></div></div><strong>{{ item.value }}</strong></div>{% empty %}<p class="small">No alerts yet.</p>{% endfor %}
+  </div>
+  <div class="card">
+    <h2>Workflow Status</h2>
+    {% for item in metrics.charts.workflow_statuses %}<div class="bar-row"><span>{{ item.label }}</span><div class="bar-track"><div class="bar-fill" style="width: {{ item.percent }}%"></div></div><strong>{{ item.value }}</strong></div>{% empty %}<p class="small">No workflows executed yet.</p>{% endfor %}
+  </div>
+  <div class="card">
+    <h2>Analyst Workload</h2>
+    {% for item in metrics.charts.analyst_workload %}<div class="bar-row"><span>{{ item.label }}</span><div class="bar-track"><div class="bar-fill" style="width: {{ item.percent }}%"></div></div><strong>{{ item.count }}</strong></div>{% empty %}<p class="small">No active assignments.</p>{% endfor %}
+  </div>
+  <div class="card">
+    <h2>Detection Status</h2>
+    {% for item in metrics.charts.detection_statuses %}<div class="bar-row"><span>{{ item.label }}</span><div class="bar-track"><div class="bar-fill" style="width: {{ item.percent }}%"></div></div><strong>{{ item.value }}</strong></div>{% empty %}<p class="small">No detection hits yet.</p>{% endfor %}
+  </div>
+  <div class="card">
+    <h2>Detection Hits by Rule</h2>
+    {% for item in metrics.charts.detection_rules %}<div class="bar-row"><span>{{ item.label }}</span><div class="bar-track"><div class="bar-fill" style="width: {{ item.percent }}%"></div></div><strong>{{ item.count }}</strong></div>{% empty %}<p class="small">No detection hits yet.</p>{% endfor %}
+  </div>
+  <div class="card">
+    <h2>Asset Risk Levels</h2>
+    {% for item in metrics.charts.asset_risk_levels %}<div class="bar-row"><span>{{ item.label }}</span><div class="bar-track"><div class="bar-fill" style="width: {{ item.percent }}%"></div></div><strong>{{ item.value }}</strong></div>{% empty %}<p class="small">No asset assessments yet.</p>{% endfor %}
+  </div>
+  <div class="card">
+    <h2>Asset Types</h2>
+    {% for item in metrics.charts.asset_types %}<div class="bar-row"><span>{{ item.label }}</span><div class="bar-track"><div class="bar-fill" style="width: {{ item.percent }}%"></div></div><strong>{{ item.value }}</strong></div>{% empty %}<p class="small">No assets registered.</p>{% endfor %}
+  </div>
+</div>
+<div class="card">
+  <h2>Recent Asset Risk</h2>
+  <table><tr><th>Asset</th><th>Score</th><th>Level</th><th>Assessed</th></tr>
+  {% for item in metrics.recent_asset_risks %}<tr><td>{{ item.asset }}</td><td>{{ item.score }}</td><td><span class="badge {{ item.level|lower }}">{{ item.level }}</span></td><td>{{ item.assessed_at }}</td></tr>{% empty %}<tr><td colspan="4">No asset assessments yet.</td></tr>{% endfor %}
+  </table>
+</div>
+<div class="card">
+  <h2>Recent Detection Hits</h2>
+  <table><tr><th>Time</th><th>Title</th><th>Severity</th><th>Status</th><th>Rule</th></tr>
+  {% for hit in metrics.recent_detection_hits %}<tr><td>{{ hit.detected_at }}</td><td>{{ hit.title }}</td><td><span class="badge {{ hit.severity|lower }}">{{ hit.severity }}</span></td><td>{{ hit.status }}</td><td>{{ hit.rule }}</td></tr>{% empty %}<tr><td colspan="5">No detections yet.</td></tr>{% endfor %}
+  </table>
+</div>
+<div class="card">
+  <h2>Recent Alerts</h2>
+  <table><tr><th>Time</th><th>Title</th><th>Severity</th><th>Status</th></tr>
+  {% for alert in metrics.recent_alerts %}<tr><td>{{ alert.received_at }}</td><td>{{ alert.title }}</td><td><span class="badge {{ alert.severity|lower }}">{{ alert.severity }}</span></td><td>{{ alert.status }}</td></tr>{% empty %}<tr><td colspan="4">No alerts ingested yet.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endif %}
+{% endblock %}

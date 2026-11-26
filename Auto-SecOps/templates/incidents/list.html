@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Incidents - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Incident Management <a class="small" href="/api/incidents/export-csv/">Export CSV</a></h1>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+<div class="card">
+  <form method="get">
+    <label>Search <input name="q" value="{{ filters.q }}" placeholder="title or description"></label>
+    <label>Severity <select name="severity"><option value="">All</option>{% for value, label in severities %}<option value="{{ value }}" {% if filters.severity == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+    <label>Status <select name="status"><option value="">All</option>{% for value, label in statuses %}<option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+    <button type="submit">Filter</button>
+  </form>
+</div>
+{% for incident in incidents %}
+<div class="card">
+  <h2>{{ incident.title }}</h2>
+  <p class="small">{{ incident.severity }} | {{ incident.priority }} | {{ incident.status }} | Risk {{ incident.risk_score }}</p>
+  <p>{{ incident.description|linebreaksbr }}</p>
+  <p><strong>Assignments:</strong> {% for assignment in incident.assignments.all %}{{ assignment.user.display_name }}{% if not forloop.last %}, {% endif %}{% empty %}Unassigned{% endfor %}</p>
+  <p><strong>MITRE:</strong> {{ incident.mitre_techniques|join:", " }}</p>
+  <form method="post">
+    {% csrf_token %}<input type="hidden" name="incident_id" value="{{ incident.id }}">
+    <input type="hidden" name="action" value="status">
+    <select name="status">{% for value, label in statuses %}<option value="{{ value }}" {% if value == incident.status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <input name="note" placeholder="Status note">
+    <button type="submit">Update status</button>
+  </form>
+  <form method="post">
+    {% csrf_token %}<input type="hidden" name="incident_id" value="{{ incident.id }}"><input type="hidden" name="action" value="assign">
+    <select name="user_id">{% for user in users %}<option value="{{ user.id }}">{{ user.display_name }}</option>{% endfor %}</select>
+    <button type="submit">Assign</button>
+  </form>
+  <form method="post">
+    {% csrf_token %}<input type="hidden" name="incident_id" value="{{ incident.id }}"><input type="hidden" name="action" value="note">
+    <input name="note" placeholder="Investigation note"><button type="submit">Add note</button>
+  </form>
+  <form method="post">
+    {% csrf_token %}<input type="hidden" name="incident_id" value="{{ incident.id }}"><input type="hidden" name="action" value="workflows"><button type="submit">Run workflows</button>
+  </form>
+  <form method="post">
+    {% csrf_token %}<input type="hidden" name="incident_id" value="{{ incident.id }}"><input type="hidden" name="action" value="report"><button type="submit">Generate PDF</button>
+  </form>
+  <h3>Timeline</h3>
+  <table><tr><th>When</th><th>Event</th><th>Summary</th></tr>{% for event in incident.timeline.all %}<tr><td>{{ event.occurred_at }}</td><td>{{ event.event_type }}</td><td>{{ event.summary }}</td></tr>{% empty %}<tr><td colspan="3">No timeline events.</td></tr>{% endfor %}</table>
+</div>
+{% empty %}<div class="card">No incidents created yet.</div>{% endfor %}
+{% endblock %}

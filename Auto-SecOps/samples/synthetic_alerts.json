@@ -1,0 +1,304 @@
+{
+  "alerts": [
+    {
+      "external_id": "GEN-0001",
+      "title": "Synthetic generated alert 1",
+      "description": "port scan detected against multiple internal hosts",
+      "severity": "MEDIUM",
+      "source_ip": "198.51.100.77",
+      "user": "alice",
+      "alert_type": "nids",
+      "timestamp": "2026-11-26T01:00:00Z"
+    },
+    {
+      "external_id": "GEN-0002",
+      "title": "Synthetic generated alert 2",
+      "description": "configuration baseline deviation",
+      "severity": "LOW",
+      "source_ip": "192.0.2.44",
+      "user": "alice",
+      "alert_type": "compliance",
+      "timestamp": "2026-11-26T02:00:00Z"
+    },
+    {
+      "external_id": "GEN-0003",
+      "title": "Synthetic generated alert 3",
+      "description": "phishing email with credential harvesting link",
+      "severity": "HIGH",
+      "source_ip": "198.51.100.77",
+      "user": "bob",
+      "alert_type": "mail_security",
+      "timestamp": "2026-11-26T03:00:00Z"
+    },
+    {
+      "external_id": "GEN-0004",
+      "title": "Synthetic generated alert 4",
+      "description": "phishing email with credential harvesting link",
+      "severity": "HIGH",
+      "source_ip": "203.0.113.10",
+      "user": "finance-user",
+      "alert_type": "mail_security",
+      "timestamp": "2026-11-26T04:00:00Z"
+    },
+    {
+      "external_id": "GEN-0005",
+      "title": "Synthetic generated alert 5",
+      "description": "phishing email with credential harvesting link",
+      "severity": "HIGH",
+      "source_ip": "203.0.113.10",
+      "user": "bob",
+      "alert_type": "mail_security",
+      "timestamp": "2026-11-26T05:00:00Z"
+    },
+    {
+      "external_id": "GEN-0006",
+      "title": "Synthetic generated alert 6",
+      "description": "configuration baseline deviation",
+      "severity": "LOW",
+      "source_ip": "192.0.2.44",
+      "user": "finance-user",
+      "alert_type": "compliance",
+      "timestamp": "2026-11-26T06:00:00Z"
+    },
+    {
+      "external_id": "GEN-0007",
+      "title": "Synthetic generated alert 7",
+      "description": "port scan detected against multiple internal hosts",
+      "severity": "MEDIUM",
+      "source_ip": "192.0.2.44",
+      "user": "svc-deploy",
+      "alert_type": "nids",
+      "timestamp": "2026-11-26T07:00:00Z"
+    },
+    {
+      "external_id": "GEN-0008",
+      "title": "Synthetic generated alert 8",
+      "description": "phishing email with credential harvesting link",
+      "severity": "HIGH",
+      "source_ip": "203.0.113.10",
+      "user": "finance-user",
+      "alert_type": "mail_security",
+      "timestamp": "2026-11-26T08:00:00Z"
+    },
+    {
+      "external_id": "GEN-0009",
+      "title": "Synthetic generated alert 9",
+      "description": "failed password brute force login attempts",
+      "severity": "HIGH",
+      "source_ip": "192.0.2.44",
+      "user": "bob",
+      "alert_type": "authentication_failure",
+      "timestamp": "2026-11-26T09:00:00Z"
+    },
+    {
+      "external_id": "GEN-0010",
+      "title": "Synthetic generated alert 10",
+      "description": "failed password brute force login attempts",
+      "severity": "HIGH",
+      "source_ip": "198.51.100.77",
+      "user": "finance-user",
+      "alert_type": "authentication_failure",
+      "timestamp": "2026-11-26T10:00:00Z"
+    },
+    {
+      "external_id": "GEN-0011",
+      "title": "Synthetic generated alert 11",
+      "description": "phishing email with credential harvesting link",
+      "severity": "HIGH",
+      "source_ip": "192.0.2.44",
+      "user": "svc-deploy",
+      "alert_type": "mail_security",
+      "timestamp": "2026-11-26T11:00:00Z"
+    },
+    {
+      "external_id": "GEN-0012",
+      "title": "Synthetic generated alert 12",
+      "description": "phishing email with credential harvesting link",
+      "severity": "HIGH",
+      "source_ip": "203.0.113.10",
+      "user": "finance-user",
+      "alert_type": "mail_security",
+      "timestamp": "2026-11-26T12:00:00Z"
+    },
+    {
+      "external_id": "GEN-0013",
+      "title": "Synthetic generated alert 13",
+      "description": "phishing email with credential harvesting link",
+      "severity": "HIGH",
+      "source_ip": "203.0.113.10",
+      "user": "bob",
+      "alert_type": "mail_security",
+      "timestamp": "2026-11-26T13:00:00Z"
+    },
+    {
+      "external_id": "GEN-0014",
+      "title": "Synthetic generated alert 14",
+      "description": "port scan detected against multiple internal hosts",
+      "severity": "MEDIUM",
+      "source_ip": "198.51.100.77",
+      "user": "bob",
+      "alert_type": "nids",
+      "timestamp": "2026-11-26T14:00:00Z"
+    },
+    {
+      "external_id": "GEN-0015",
+      "title": "Synthetic generated alert 15",
+      "description": "malware beacon to command and control domain",
+      "severity": "CRITICAL",
+      "source_ip": "203.0.113.10",
+      "user": "bob",
+      "alert_type": "edr_malware",
+      "timestamp": "2026-11-26T15:00:00Z"
+    },
+    {
+      "external_id": "GEN-0016",
+      "title": "Synthetic generated alert 16",
+      "description": "configuration baseline deviation",
+      "severity": "LOW",
+      "source_ip": "198.51.100.77",
+      "user": "finance-user",
+      "alert_type": "compliance",
+      "timestamp": "2026-11-26T16:00:00Z"
+    },
+    {
+      "external_id": "GEN-0017",
+      "title": "Synthetic generated alert 17",
+      "description": "configuration baseline deviation",
+      "severity": "LOW",
+      "source_ip": "198.51.100.77",
+      "user": "finance-user",
+      "alert_type": "compliance",
+      "timestamp": "2026-11-26T17:00:00Z"
+    },
+    {
+      "external_id": "GEN-0018",
+      "title": "Synthetic generated alert 18",
+      "description": "configuration baseline deviation",
+      "severity": "LOW",
+      "source_ip": "192.0.2.44",
+      "user": "finance-user",
+      "alert_type": "compliance",
+      "timestamp": "2026-11-26T18:00:00Z"
+    },
+    {
+      "external_id": "GEN-0019",
+      "title": "Synthetic generated alert 19",
+      "description": "port scan detected against multiple internal hosts",
+      "severity": "MEDIUM",
+      "source_ip": "203.0.113.10",
+      "user": "finance-user",
+      "alert_type": "nids",
+      "timestamp": "2026-11-26T19:00:00Z"
+    },
+    {
+      "external_id": "GEN-0020",
+      "title": "Synthetic generated alert 20",
+      "description": "configuration baseline deviation",
+      "severity": "LOW",
+      "source_ip": "203.0.113.10",
+      "user": "finance-user",
+      "alert_type": "compliance",
+      "timestamp": "2026-11-26T20:00:00Z"
+    },
+    {
+      "external_id": "GEN-0021",
+      "title": "Synthetic generated alert 21",
+      "description": "malware beacon to command and control domain",
+      "severity": "CRITICAL",
+      "source_ip": "192.0.2.44",
+      "user": "alice",
+      "alert_type": "edr_malware",
+      "timestamp": "2026-11-26T21:00:00Z"
+    },
+    {
+      "external_id": "GEN-0022",
+      "title": "Synthetic generated alert 22",
+      "description": "configuration baseline deviation",
+      "severity": "LOW",
+      "source_ip": "203.0.113.10",
+      "user": "alice",
+      "alert_type": "compliance",
+      "timestamp": "2026-11-26T22:00:00Z"
+    },
+    {
+      "external_id": "GEN-0023",
+      "title": "Synthetic generated alert 23",
+      "description": "port scan detected against multiple internal hosts",
+      "severity": "MEDIUM",
+      "source_ip": "192.0.2.44",
+      "user": "svc-deploy",
+      "alert_type": "nids",
+      "timestamp": "2026-11-26T23:00:00Z"
+    },
+    {
+      "external_id": "GEN-0024",
+      "title": "Synthetic generated alert 24",
+      "description": "configuration baseline deviation",
+      "severity": "LOW",
+      "source_ip": "192.0.2.44",
+      "user": "finance-user",
+      "alert_type": "compliance",
+      "timestamp": "2026-11-26T00:00:00Z"
+    },
+    {
+      "external_id": "GEN-0025",
+      "title": "Synthetic generated alert 25",
+      "description": "failed password brute force login attempts",
+      "severity": "HIGH",
+      "source_ip": "198.51.100.77",
+      "user": "finance-user",
+      "alert_type": "authentication_failure",
+      "timestamp": "2026-11-26T01:00:00Z"
+    },
+    {
+      "external_id": "GEN-0026",
+      "title": "Synthetic generated alert 26",
+      "description": "configuration baseline deviation",
+      "severity": "LOW",
+      "source_ip": "198.51.100.77",
+      "user": "finance-user",
+      "alert_type": "compliance",
+      "timestamp": "2026-11-26T02:00:00Z"
+    },
+    {
+      "external_id": "GEN-0027",
+      "title": "Synthetic generated alert 27",
+      "description": "configuration baseline deviation",
+      "severity": "LOW",
+      "source_ip": "192.0.2.44",
+      "user": "alice",
+      "alert_type": "compliance",
+      "timestamp": "2026-11-26T03:00:00Z"
+    },
+    {
+      "external_id": "GEN-0028",
+      "title": "Synthetic generated alert 28",
+      "description": "phishing email with credential harvesting link",
+      "severity": "HIGH",
+      "source_ip": "198.51.100.77",
+      "user": "svc-deploy",
+      "alert_type": "mail_security",
+      "timestamp": "2026-11-26T04:00:00Z"
+    },
+    {
+      "external_id": "GEN-0029",
+      "title": "Synthetic generated alert 29",
+      "description": "malware beacon to command and control domain",
+      "severity": "CRITICAL",
+      "source_ip": "198.51.100.77",
+      "user": "svc-deploy",
+      "alert_type": "edr_malware",
+      "timestamp": "2026-11-26T05:00:00Z"
+    },
+    {
+      "external_id": "GEN-0030",
+      "title": "Synthetic generated alert 30",
+      "description": "configuration baseline deviation",
+      "severity": "LOW",
+      "source_ip": "192.0.2.44",
+      "user": "bob",
+      "alert_type": "compliance",
+      "timestamp": "2026-11-26T06:00:00Z"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+external_id,title,description,severity,source_ip,user,alert_type,timestamp
+GEN-0001,Synthetic generated alert 1,port scan detected against multiple internal hosts,MEDIUM,198.51.100.77,alice,nids,2026-11-26T01:00:00Z
+GEN-0002,Synthetic generated alert 2,configuration baseline deviation,LOW,192.0.2.44,alice,compliance,2026-11-26T02:00:00Z
+GEN-0003,Synthetic generated alert 3,phishing email with credential harvesting link,HIGH,198.51.100.77,bob,mail_security,2026-11-26T03:00:00Z
+GEN-0004,Synthetic generated alert 4,phishing email with credential harvesting link,HIGH,203.0.113.10,finance-user,mail_security,2026-11-26T04:00:00Z
+GEN-0005,Synthetic generated alert 5,phishing email with credential harvesting link,HIGH,203.0.113.10,bob,mail_security,2026-11-26T05:00:00Z
+GEN-0006,Synthetic generated alert 6,configuration baseline deviation,LOW,192.0.2.44,finance-user,compliance,2026-11-26T06:00:00Z
+GEN-0007,Synthetic generated alert 7,port scan detected against multiple internal hosts,MEDIUM,192.0.2.44,svc-deploy,nids,2026-11-26T07:00:00Z
+GEN-0008,Synthetic generated alert 8,phishing email with credential harvesting link,HIGH,203.0.113.10,finance-user,mail_security,2026-11-26T08:00:00Z
+GEN-0009,Synthetic generated alert 9,failed password brute force login attempts,HIGH,192.0.2.44,bob,authentication_failure,2026-11-26T09:00:00Z
+GEN-0010,Synthetic generated alert 10,failed password brute force login attempts,HIGH,198.51.100.77,finance-user,authentication_failure,2026-11-26T10:00:00Z
+GEN-0011,Synthetic generated alert 11,phishing email with credential harvesting link,HIGH,192.0.2.44,svc-deploy,mail_security,2026-11-26T11:00:00Z
+GEN-0012,Synthetic generated alert 12,phishing email with credential harvesting link,HIGH,203.0.113.10,finance-user,mail_security,2026-11-26T12:00:00Z
+GEN-0013,Synthetic generated alert 13,phishing email with credential harvesting link,HIGH,203.0.113.10,bob,mail_security,2026-11-26T13:00:00Z
+GEN-0014,Synthetic generated alert 14,port scan detected against multiple internal hosts,MEDIUM,198.51.100.77,bob,nids,2026-11-26T14:00:00Z
+GEN-0015,Synthetic generated alert 15,malware beacon to command and control domain,CRITICAL,203.0.113.10,bob,edr_malware,2026-11-26T15:00:00Z
+GEN-0016,Synthetic generated alert 16,configuration baseline deviation,LOW,198.51.100.77,finance-user,compliance,2026-11-26T16:00:00Z
+GEN-0017,Synthetic generated alert 17,configuration baseline deviation,LOW,198.51.100.77,finance-user,compliance,2026-11-26T17:00:00Z
+GEN-0018,Synthetic generated alert 18,configuration baseline deviation,LOW,192.0.2.44,finance-user,compliance,2026-11-26T18:00:00Z
+GEN-0019,Synthetic generated alert 19,port scan detected against multiple internal hosts,MEDIUM,203.0.113.10,finance-user,nids,2026-11-26T19:00:00Z
+GEN-0020,Synthetic generated alert 20,configuration baseline deviation,LOW,203.0.113.10,finance-user,compliance,2026-11-26T20:00:00Z
+GEN-0021,Synthetic generated alert 21,malware beacon to command and control domain,CRITICAL,192.0.2.44,alice,edr_malware,2026-11-26T21:00:00Z
+GEN-0022,Synthetic generated alert 22,configuration baseline deviation,LOW,203.0.113.10,alice,compliance,2026-11-26T22:00:00Z
+GEN-0023,Synthetic generated alert 23,port scan detected against multiple internal hosts,MEDIUM,192.0.2.44,svc-deploy,nids,2026-11-26T23:00:00Z
+GEN-0024,Synthetic generated alert 24,configuration baseline deviation,LOW,192.0.2.44,finance-user,compliance,2026-11-26T00:00:00Z
+GEN-0025,Synthetic generated alert 25,failed password brute force login attempts,HIGH,198.51.100.77,finance-user,authentication_failure,2026-11-26T01:00:00Z
+GEN-0026,Synthetic generated alert 26,configuration baseline deviation,LOW,198.51.100.77,finance-user,compliance,2026-11-26T02:00:00Z
+GEN-0027,Synthetic generated alert 27,configuration baseline deviation,LOW,192.0.2.44,alice,compliance,2026-11-26T03:00:00Z
+GEN-0028,Synthetic generated alert 28,phishing email with credential harvesting link,HIGH,198.51.100.77,svc-deploy,mail_security,2026-11-26T04:00:00Z
+GEN-0029,Synthetic generated alert 29,malware beacon to command and control domain,CRITICAL,198.51.100.77,svc-deploy,edr_malware,2026-11-26T05:00:00Z
+GEN-0030,Synthetic generated alert 30,configuration baseline deviation,LOW,192.0.2.44,bob,compliance,2026-11-26T06:00:00Z

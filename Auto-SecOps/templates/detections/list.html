@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Detections - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Detection Engineering <a class="small" href="/api/detection-rules/export-csv/">Rules CSV</a> <a class="small" href="/api/detection-hits/export-csv/">Hits CSV</a></h1>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+{% if can_manage_view %}
+<div class="card">
+  <form class="inline" method="post">{% csrf_token %}<input type="hidden" name="action" value="evaluate-all"><button type="submit">Evaluate all enabled rules</button></form>
+  <form class="inline" method="post">{% csrf_token %}<input type="hidden" name="action" value="backtest-all"><button class="ghost" type="submit">Backtest all rules</button></form>
+</div>
+{% endif %}
+<h2>Rules</h2>
+{% for rule in rules %}
+<div class="card">
+  <h3>{{ rule.name }} <span class="small">{{ rule.rule_id }}</span></h3>
+  <p class="small">{{ rule.rule_type }} | {{ rule.severity }} | Enabled: {{ rule.enabled }}</p>
+  <p>{{ rule.description|linebreaksbr }}</p>
+  <p><strong>Conditions:</strong> {{ rule.conditions }}</p>
+  <p><strong>MITRE:</strong> {{ rule.mitre_techniques|join:", " }}</p>
+  <p class="small">Last evaluated: {{ rule.last_evaluated_at|default:"Never" }}</p>
+  {% if can_manage_view %}
+  <form class="inline" method="post">{% csrf_token %}<input type="hidden" name="action" value="evaluate"><input type="hidden" name="rule_id" value="{{ rule.id }}"><button type="submit">Evaluate now</button></form>
+  <form class="inline" method="post">{% csrf_token %}<input type="hidden" name="action" value="backtest"><input type="hidden" name="rule_id" value="{{ rule.id }}"><button class="ghost" type="submit">Backtest</button></form>
+  {% endif %}
+</div>
+{% empty %}<div class="card">No detection rules configured.</div>{% endfor %}
+<h2>Hits</h2>
+{% for hit in hits %}
+<div class="card">
+  <h3>{{ hit.title }}</h3>
+  <p class="small">{{ hit.severity }} | {{ hit.status }} | {{ hit.detected_at }} | Rule: {{ hit.rule.rule_id }}</p>
+  <p>{{ hit.summary|linebreaksbr }}</p>
+  <p><strong>Evidence:</strong>
+    {% if hit.evidence.value %}Value {{ hit.evidence.value }}{% elif hit.evidence.source_ip %}Source {{ hit.evidence.source_ip }}{% elif hit.evidence.group_by %}{{ hit.evidence.group_by }}={{ hit.evidence.value }} ({{ hit.evidence.alert_ids|length }} alerts){% else %}See API payload{% endif %}
+  </p>
+  <p><strong>Links:</strong> {% if hit.alert %}<a href="/alerts/">Alert #{{ hit.alert_id }}</a>{% endif %} {% if hit.incident %}<a href="/incidents/">Incident #{{ hit.incident_id }}</a>{% endif %}</p>
+  {% if can_manage_view %}
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="review"><input type="hidden" name="hit_id" value="{{ hit.id }}"><select name="status">{% for value, label in statuses %}<option value="{{ value }}" {% if value == hit.status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><input name="note" placeholder="Review note"><button type="submit">Review</button></form>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="to-alert"><input type="hidden" name="hit_id" value="{{ hit.id }}"><button type="submit">Create alert</button></form>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="escalate"><input type="hidden" name="hit_id" value="{{ hit.id }}"><input name="note" placeholder="Escalation note"><button type="submit">Escalate to incident</button></form>
+  {% endif %}
+</div>
+{% empty %}<div class="card">No detection hits yet.</div>{% endfor %}
+{% endblock %}

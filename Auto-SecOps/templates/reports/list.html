@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Reports - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Reports</h1>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+<div class="card">
+  <h2>Generate report</h2>
+  <form method="post">
+    {% csrf_token %}
+    <label>Type <select name="report_type">{% for value, label in report_types %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select></label>
+    <label>Incident <select name="incident_id"><option value="">-</option>{% for incident in incidents %}<option value="{{ incident.id }}">{{ incident.title }}</option>{% endfor %}</select></label>
+    <label>Title <input name="title"></label>
+    <button type="submit">Generate PDF</button>
+  </form>
+</div>
+<div class="card">
+  <table><tr><th>Created</th><th>Title</th><th>Type</th><th>Incident</th><th>PDF</th></tr>
+  {% for report in reports %}<tr><td>{{ report.created_at }}</td><td>{{ report.title }}</td><td>{{ report.report_type }}</td><td>{{ report.incident.title|default:"-" }}</td><td>{% if report.pdf %}<a href="{{ report.pdf.url }}">Download</a>{% else %}-{% endif %}</td></tr>{% empty %}<tr><td colspan="5">No reports generated yet.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

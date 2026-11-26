@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Search - AutoSecOps{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <span class="eyebrow">Unified investigation</span>
+    <h1>Global Search</h1>
+    <p class="small">Search alerts, incidents, detections, assets, vulnerabilities, indicators, reports, and audit activity.</p>
+  </div>
+</div>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+<div class="card search-hero">
+  <form method="get" class="search-form">
+    <input type="search" name="q" value="{{ results.query }}" placeholder="Search by IP, CVE, hostname, title, user, or action" autofocus>
+    <button type="submit">Search</button>
+  </form>
+  {% if results.query %}<p class="small">{{ results.count }} result(s) for &ldquo;{{ results.query }}&rdquo;</p>{% endif %}
+</div>
+{% for group in results.groups %}
+<div class="card">
+  <div class="card-heading"><h2>{{ group.label }}</h2><span class="small">{{ group.items|length }} result(s)</span></div>
+  <div class="result-list">
+    {% for item in group.items %}
+    <a class="result-row" href="{{ item.url }}">
+      <span class="result-title">{{ item.title }}</span>
+      <span class="result-subtitle">{{ item.subtitle }}</span>
+      {% if item.badge %}<span class="badge">{{ item.badge }}</span>{% endif %}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% empty %}
+{% if results.query %}<div class="card empty-state">No matching records found. Try an IP, hostname, CVE, username, or action name.</div>{% endif %}
+{% endfor %}
+{% endblock %}

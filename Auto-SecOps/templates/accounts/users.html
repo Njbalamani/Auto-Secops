@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Users - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Platform Users</h1>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+{% if request.user.is_platform_admin %}
+<div class="card">
+  <h2>Create user</h2>
+  <form method="post">
+    {% csrf_token %}
+    <label>Username <input name="username" required></label>
+    <label>Display name <input name="display_name"></label>
+    <label>Email <input name="email" type="email"></label>
+    <label>Password <input name="password" type="password" required></label>
+    <label>Organization
+      <select name="organization">
+        {% for organization in organizations %}<option value="{{ organization.id }}">{{ organization.name }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Role <select name="platform_role">{% for value, label in roles %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select></label>
+    <label><input type="checkbox" name="is_staff"> Staff access to Django admin</label>
+    <button type="submit">Create user</button>
+  </form>
+</div>
+{% endif %}
+<div class="card">
+  <table>
+    <tr><th>Username</th><th>Display name</th><th>Organization</th><th>Role</th><th>Active</th></tr>
+    {% for user in users %}<tr><td>{{ user.username }}</td><td>{{ user.display_name }}</td><td>{{ user.organization.name|default:"-" }}</td><td>{{ user.platform_role }}</td><td>{{ user.is_active }}</td></tr>{% empty %}<tr><td colspan="5">No users found.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

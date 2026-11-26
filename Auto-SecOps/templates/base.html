@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}AutoSecOps{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="{% if not request.user.is_authenticated %}auth-body{% endif %}">
+{% if request.user.is_authenticated %}
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-mark">AS</span>
+      <span><strong>AUTOSECOPS</strong><small>{{ deployment_mode|default:"LOCAL_DEMO" }}</small></span>
+    </div>
+    <nav class="side-nav" aria-label="Primary navigation">
+      <span class="nav-section">Workspace</span>
+      <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Overview</a>
+      <a class="nav-link {% if request.path == '/search/' %}active{% endif %}" href="/search/">Global Search</a>
+      <span class="nav-section">Operations</span>
+      <a class="nav-link {% if request.path == '/alerts/' %}active{% endif %}" href="/alerts/">Alerts</a>
+      <a class="nav-link {% if request.path == '/incidents/' %}active{% endif %}" href="/incidents/">Incidents</a>
+      <a class="nav-link {% if request.path == '/detections/' %}active{% endif %}" href="/detections/">Detections</a>
+      <a class="nav-link {% if request.path == '/assets/' %}active{% endif %}" href="/assets/">Assets</a>
+      <a class="nav-link {% if request.path == '/intelligence/' %}active{% endif %}" href="/intelligence/">Intelligence</a>
+      <span class="nav-section">Advanced</span>
+      <a class="nav-link {% if request.path == '/hunting/' %}active{% endif %}" href="/hunting/">Threat Hunting</a>
+      <a class="nav-link {% if request.path == '/risk-fabric/' %}active{% endif %}" href="/risk-fabric/">Risk Fabric</a>
+      <a class="nav-link {% if request.path == '/copilot/' %}active{% endif %}" href="/copilot/">Analyst Copilot</a>
+      <span class="nav-section">Governance</span>
+      <a class="nav-link {% if request.path == '/automation/' %}active{% endif %}" href="/automation/">Automation</a>
+      <a class="nav-link {% if request.path == '/reports/' %}active{% endif %}" href="/reports/">Reports</a>
+      <a class="nav-link {% if request.path == '/audit/' %}active{% endif %}" href="/audit/">Audit Trail</a>
+      <a class="nav-link {% if request.path == '/system/' %}active{% endif %}" href="/system/">System Status</a>
+      {% if request.user.is_platform_admin %}<a class="nav-link {% if request.path == '/accounts/' %}active{% endif %}" href="/accounts/">Users</a>{% endif %}
+    </nav>
+    <div class="sidebar-footer">
+      <span class="small">{{ platform_name }} v{{ platform_version|default:"1.0.0" }}</span>
+      {% if synthetic_data_only %}<span class="badge synthetic">SYNTHETIC MODE</span>{% endif %}
+    </div>
+  </aside>
+  <div class="app-main">
+    <header class="topbar">
+      <details class="mobile-menu">
+        <summary>Menu</summary>
+        <div class="mobile-menu-links">
+          <a href="/">Overview</a><a href="/search/">Search</a><a href="/alerts/">Alerts</a>
+          <a href="/incidents/">Incidents</a><a href="/detections/">Detections</a>
+          <a href="/assets/">Assets</a><a href="/hunting/">Hunting</a>
+          <a href="/risk-fabric/">Risk Fabric</a><a href="/copilot/">Copilot</a>
+          <a href="/system/">Status</a>
+        </div>
+      </details>
+      <form class="topbar-search" method="get" action="/search/">
+        <input type="search" name="q" placeholder="Search the SOC..." aria-label="Global search">
+        <button type="submit">Search</button>
+      </form>
+      <div class="topbar-user">
+        <span class="avatar">{{ request.user.display_name|slice:":2"|upper }}</span>
+        <span class="user-meta"><strong>{{ request.user.display_name }}</strong><small>{{ request.user.platform_role }}</small></span>
+        <form class="inline" method="post" action="/logout/">
+          {% csrf_token %}<button class="ghost" type="submit">Sign out</button>
+        </form>
+      </div>
+    </header>
+    <main class="content">
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+      </ul>
+      {% endif %}
+      {% block content %}{% endblock %}
+      <footer class="app-footer">
+        <span>{{ platform_name }} v{{ platform_version|default:"1.0.0" }}</span>
+        <span>{{ ai_disclaimer }}</span>
+        {% if synthetic_data_only %}<span>Synthetic demonstration mode enabled.</span>{% endif %}
+      </footer>
+    </main>
+  </div>
+</div>
+{% else %}
+<div class="auth-shell">
+  <div class="auth-aside">
+    <span class="brand-mark large">AS</span>
+    <h1>AUTOSECOPS</h1>
+    <p>Security operations, automation, detection engineering, and exposure intelligence in one workspace.</p>
+    <ul>
+      <li>Unified alert and incident triage</li>
+      <li>Explainable classification and detection rules</li>
+      <li>Asset risk and vulnerability correlation</li>
+      <li>Threat hunting, attack paths, and analyst copilot</li>
+      <li>Auditable automation with approval gates</li>
+    </ul>
+  </div>
+  <div class="auth-panel">
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+    {% block auth_content %}{% endblock %}
+    {% block content_anonymous %}{% endblock %}
+    <p class="auth-footer">{{ platform_name }} v{{ platform_version|default:"1.0.0" }} | {{ ai_disclaimer }}</p>
+  </div>
+</div>
+{% endif %}
+</body>
+</html>

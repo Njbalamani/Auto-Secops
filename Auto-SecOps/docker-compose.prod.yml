@@ -1,0 +1,134 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-autosecops}
+      POSTGRES_USER: ${POSTGRES_USER:-autosecops}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-autosecops}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    command: web
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings_prod
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?set ALLOWED_HOSTS in .env}
+      DATABASE_ENGINE: django.db.backends.postgresql
+      DB_NAME: ${POSTGRES_DB:-autosecops}
+      DB_USER: ${POSTGRES_USER:-autosecops}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      SECURE_SSL_REDIRECT: ${SECURE_SSL_REDIRECT:-True}
+      AUTOSEOPS_DEPLOYMENT: PRODUCTION
+      AUTOSEOPS_SEED_ON_START: ${AUTOSEOPS_SEED_ON_START:-False}
+    volumes:
+      - static_data:/app/staticfiles
+      - media_data:/app/media
+    expose:
+      - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+
+  worker:
+    build: .
+    command: worker
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings_prod
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?set ALLOWED_HOSTS in .env}
+      DATABASE_ENGINE: django.db.backends.postgresql
+      DB_NAME: ${POSTGRES_DB:-autosecops}
+      DB_USER: ${POSTGRES_USER:-autosecops}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      AUTOSEOPS_SEED_ON_START: False
+    volumes:
+      - static_data:/app/staticfiles
+      - media_data:/app/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+
+  beat:
+    build: .
+    command: beat
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings_prod
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?set ALLOWED_HOSTS in .env}
+      DATABASE_ENGINE: django.db.backends.postgresql
+      DB_NAME: ${POSTGRES_DB:-autosecops}
+      DB_USER: ${POSTGRES_USER:-autosecops}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      AUTOSEOPS_SEED_ON_START: False
+    volumes:
+      - static_data:/app/staticfiles
+      - media_data:/app/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/autosecops.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_data:/staticfiles:ro
+      - media_data:/media:ro
+    depends_on:
+      - web
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  postgres_data:
+  static_data:
+  media_data:

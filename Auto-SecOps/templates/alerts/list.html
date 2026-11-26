@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Alerts - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Alert Pipeline <a class="small" href="/api/alerts/export-csv/">Export CSV</a></h1>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+<div class="card">
+  <form method="get">
+    <label>Search <input name="q" value="{{ filters.q }}" placeholder="title, IP, user, external ID"></label>
+    <label>Severity <select name="severity"><option value="">All</option>{% for value, label in severity_choices %}<option value="{{ value }}" {% if filters.severity == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+    <label>Status <select name="status"><option value="">All</option>{% for value, label in status_choices %}<option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+    <button type="submit">Filter</button>
+  </form>
+</div>
+<div class="card">
+  <h2>Ingest alert</h2>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="ingest">
+    <label>Source name <input name="source_name" value="UI Manual Import"></label>
+    <label>JSON payload <textarea name="payload" rows="5" cols="80">{"title":"Suspicious login","severity":"HIGH","source_ip":"203.0.113.10","user":"alice","description":"failed password brute force attempts"}</textarea></label>
+    <button type="submit">Ingest, classify, enrich</button>
+  </form>
+</div>
+<div class="card">
+  <table>
+    <tr><th>Time</th><th>Title</th><th>Severity</th><th>Status</th><th>Category</th><th>Risk</th><th>Actions</th></tr>
+    {% for alert in alerts %}
+    <tr>
+      <td>{{ alert.received_at }}</td><td>{{ alert.title }}</td>
+      <td><span class="badge {{ alert.severity|lower }}">{{ alert.severity }}</span></td>
+      <td>{{ alert.status }}</td>
+      <td>{{ alert.classification.category|default:"-" }}</td>
+      <td>{{ alert.classification.risk_score|default:"-" }}</td>
+      <td>
+        <form class="inline" method="post">{% csrf_token %}<input type="hidden" name="alert_id" value="{{ alert.id }}"><input type="hidden" name="action" value="normalize"><button type="submit">Normalize</button></form>
+        <form class="inline" method="post">{% csrf_token %}<input type="hidden" name="alert_id" value="{{ alert.id }}"><input type="hidden" name="action" value="classify"><button type="submit">Classify</button></form>
+        <form class="inline" method="post">{% csrf_token %}<input type="hidden" name="alert_id" value="{{ alert.id }}"><input type="hidden" name="action" value="enrich"><button type="submit">Enrich</button></form>
+        <form class="inline" method="post">{% csrf_token %}<input type="hidden" name="alert_id" value="{{ alert.id }}"><input type="hidden" name="action" value="incident"><button type="submit">Incident</button></form>
+      </td>
+    </tr>
+    {% empty %}<tr><td colspan="7">No alerts ingested yet.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

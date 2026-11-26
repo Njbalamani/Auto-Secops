@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Threat Hunting - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Threat Hunting Workbench</h1>
+<p class="small">Use structured tokens such as <code>severity:HIGH type:alert ip:203.0.113</code> with free text. Results are read-only.</p>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+<div class="grid grid-2">
+  <div class="card search-hero">
+    <h2>Run a hunt</h2>
+    <form method="post" class="search-form">{% csrf_token %}<input type="hidden" name="action" value="execute">
+      <input type="search" name="query" value="{{ query }}" placeholder="severity:HIGH type:alert suspicious login" aria-label="Hunt query">
+      <button type="submit">Hunt</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Saved hunts</h2>
+    {% for hunt in hunts %}
+    <div class="bar-row">
+      <span><strong>{{ hunt.name }}</strong><br><span class="small">{{ hunt.query }}</span></span>
+      {% if can_manage_view %}
+      <form class="inline" method="post">{% csrf_token %}<input type="hidden" name="action" value="run-saved"><input type="hidden" name="hunt_id" value="{{ hunt.id }}"><button class="ghost" type="submit">Run</button></form>
+      <form class="inline" method="post">{% csrf_token %}<input type="hidden" name="action" value="delete-saved"><input type="hidden" name="hunt_id" value="{{ hunt.id }}"><button class="ghost danger" type="submit">Delete</button></form>
+      {% endif %}
+    </div>
+    {% empty %}<p class="small">No saved hunts yet.</p>{% endfor %}
+  </div>
+</div>
+{% if can_manage_view %}
+<div class="card">
+  <h2>Save current hunt</h2>
+  <form method="post" class="form-grid">{% csrf_token %}<input type="hidden" name="action" value="save">
+    <label>Name<input name="name" required></label>
+    <label>Query<input name="query" value="{{ query }}" required></label>
+    <label>Description<input name="description"></label>
+    <button type="submit">Save hunt</button>
+  </form>
+</div>
+{% endif %}
+{% if result %}
+<div class="card">
+  <h2>Hunt results</h2>
+  <p class="small">{{ result.summary.total }} match(es) across {{ result.groups|length }} record type(s).
+    {% for key, value in result.summary.by_type.items %}{{ key }}: {{ value }}{% if not forloop.last %} | {% endif %}{% endfor %}
+  </p>
+  {% if result.filters %}<p class="small">Parsed filters: {{ result.filters }}</p>{% endif %}
+  {% for group in result.groups %}
+  <h3>{{ group.label }}</h3>
+  <div class="result-list">
+    {% for item in group.items %}
+    <a class="result-row" href="{{ item.url }}">
+      <span class="result-title">{{ item.title }}</span>
+      <span class="result-subtitle">{{ item.subtitle }}</span>
+      <span class="badge">{{ item.badge }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% empty %}<p class="empty-state">No matches.</p>{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

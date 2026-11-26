@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}System Status - AutoSecOps{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <span class="eyebrow">Operations</span>
+    <h1>System Status</h1>
+    <p class="small">Live platform health, runtime details, and data volume.</p>
+  </div>
+  <span class="status-pill {{ status.overall|lower }}">{{ status.overall }}</span>
+</div>
+<div class="grid">
+  <div class="card stat"><span class="stat-label">Version</span><strong>{{ status.version }}</strong></div>
+  <div class="card stat"><span class="stat-label">Deployment</span><strong>{{ status.deployment }}</strong></div>
+  <div class="card stat"><span class="stat-label">Uptime</span><strong>{{ status.uptime_seconds }}s</strong></div>
+  <div class="card stat"><span class="stat-label">Python</span><strong>{{ status.python_version }}</strong></div>
+</div>
+<div class="grid grid-2">
+  <div class="card">
+    <div class="card-heading"><h2>Service checks</h2><span class="small">{{ status.generated_at }}</span></div>
+    <div class="check-list">
+      {% for check in status.checks %}
+      <div class="check-row">
+        <span class="check-dot {{ check.status|lower }}"></span>
+        <span class="check-name">{{ check.name }}</span>
+        <span class="badge {{ check.status|lower }}">{{ check.status }}</span>
+        <span class="small check-detail">{{ check.detail }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-heading"><h2>Data inventory</h2><span class="small">Live database counts</span></div>
+    <div class="inventory-grid">
+      {% for key, value in status.counts.items %}
+      <div class="inventory-item"><strong>{{ value }}</strong><span>{{ key|cut:"_" }}</span></div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<div class="grid grid-2">
+  <div class="card">
+    <div class="card-heading"><h2>Classification model</h2><span class="badge">{{ status.model.model_version }}</span></div>
+    <p><strong>Categories:</strong> {{ status.model.categories|join:", " }}</p>
+    <p class="small">{{ status.model.training_examples }} training examples | vocabulary {{ status.model.vocabulary_size }} | SHAP {{ status.model.shap_enabled }}</p>
+    <p class="small">{{ status.model.disclaimer }}</p>
+  </div>
+  <div class="card">
+    <div class="card-heading"><h2>Integrations</h2><span class="badge">{{ status.integrations.mode }}</span></div>
+    {% for integration in status.integrations.integrations %}
+    <div class="check-row">
+      <span class="check-name">{{ integration.name }}</span>
+      <span class="badge {{ integration.status|lower }}">{{ integration.status }}</span>
+      <span class="small check-detail">{{ integration.detail }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

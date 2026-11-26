@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Automation - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Automation and Approvals</h1>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+<div class="card">
+  <h2>Workflows</h2>
+  <table><tr><th>Name</th><th>Enabled</th><th>Approval required</th><th>Actions</th><th>Conditions</th></tr>
+  {% for workflow in workflows %}<tr><td>{{ workflow.name }}</td><td>{{ workflow.enabled }}</td><td>{{ workflow.requires_approval }}</td><td>{{ workflow.actions }}</td><td>{{ workflow.conditions }}</td></tr>{% empty %}<tr><td colspan="5">No workflows configured.</td></tr>{% endfor %}
+  </table>
+</div>
+<div class="card">
+  <h2>Executions</h2>
+  <table><tr><th>Time</th><th>Workflow</th><th>Status</th><th>Results</th></tr>
+  {% for execution in executions %}<tr><td>{{ execution.triggered_at }}</td><td>{{ execution.workflow.name }}</td><td>{{ execution.status }}</td><td>{{ execution.results }}</td></tr>{% empty %}<tr><td colspan="4">No workflow executions yet.</td></tr>{% endfor %}
+  </table>
+</div>
+<div class="card">
+  <h2>Approval queue</h2>
+  <table><tr><th>Requested</th><th>Workflow</th><th>Action</th><th>Status</th><th>Decision</th></tr>
+  {% for approval in approvals %}<tr>
+    <td>{{ approval.requested_at }}</td><td>{{ approval.execution.workflow.name }}</td><td>{{ approval.requested_action }}</td><td>{{ approval.status }}</td>
+    <td>{% if approval.status == "PENDING" %}
+      <form method="post">{% csrf_token %}<input type="hidden" name="action" value="decide"><input type="hidden" name="approval_id" value="{{ approval.id }}"><button name="decision" value="approve" type="submit">Approve</button><button class="danger" name="decision" value="reject" type="submit">Reject</button></form>
+    {% else %}{{ approval.decided_at }}{% endif %}</td>
+  </tr>{% empty %}<tr><td colspan="5">No approval requests.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

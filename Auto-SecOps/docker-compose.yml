@@ -1,0 +1,47 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  web:
+    build: .
+    command: web
+    environment:
+      DJANGO_SECRET_KEY: dev-only-autosecops-secret-change-before-production
+      DEBUG: "True"
+      DATABASE_ENGINE: django.db.backends.sqlite3
+      DB_NAME: /app/data/db.sqlite3
+      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      SYNTHETIC_DATA_ONLY: "True"
+      AUTOSEOPS_PASSWORD: SyntheticPass!123
+      AUTOSEOPS_SEED_ON_START: "True"
+    volumes:
+      - autosecops_media:/app/media
+      - autosecops_db:/app/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+
+  worker:
+    build: .
+    command: worker
+    environment:
+      DJANGO_SECRET_KEY: dev-only-autosecops-secret-change-before-production
+      DEBUG: "True"
+      DATABASE_ENGINE: django.db.backends.sqlite3
+      DB_NAME: /app/data/db.sqlite3
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      SYNTHETIC_DATA_ONLY: "True"
+    volumes:
+      - autosecops_media:/app/media
+      - autosecops_db:/app/data
+    depends_on:
+      - redis
+
+volumes:
+  autosecops_media:
+  autosecops_db:

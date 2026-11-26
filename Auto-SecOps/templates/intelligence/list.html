@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Threat Intelligence - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Threat Intelligence</h1>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+<div class="card">
+  <h2>Import STIX bundle</h2>
+  <form method="post">
+    {% csrf_token %}<input type="hidden" name="action" value="stix">
+    <label>STIX JSON <textarea name="bundle" rows="5" cols="80">{"type":"bundle","id":"bundle--1","objects":[]}</textarea></label>
+    <button type="submit">Import</button>
+  </form>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="taxii"><button type="submit">Poll TAXII</button></form>
+</div>
+<div class="card">
+  <h2>Indicators</h2>
+  <table><tr><th>Type</th><th>Value</th><th>Tags</th><th>Last seen</th></tr>
+  {% for indicator in indicators %}<tr><td>{{ indicator.indicator_type }}</td><td>{{ indicator.value }}</td><td>{{ indicator.tags|join:", " }}</td><td>{{ indicator.last_seen }}</td></tr>{% empty %}<tr><td colspan="4">No indicators yet.</td></tr>{% endfor %}
+  </table>
+</div>
+<div class="card">
+  <h2>Intelligence records</h2>
+  <table><tr><th>Indicator</th><th>Source</th><th>Malicious</th><th>Confidence</th><th>Observed</th></tr>
+  {% for record in records %}<tr><td>{{ record.indicator.value }}</td><td>{{ record.source_name }}</td><td>{{ record.malicious }}</td><td>{{ record.confidence }}</td><td>{{ record.observed_at }}</td></tr>{% empty %}<tr><td colspan="5">No intelligence records yet.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Assets - AutoSecOps{% endblock %}
+{% block content %}
+<h1>Asset Risk &amp; Exposure <a class="small" href="/api/assets/export-csv/">Assets CSV</a> <a class="small" href="/api/vulnerabilities/export-csv/">Vulnerabilities CSV</a></h1>
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+<div class="card">
+  <form method="get">
+    <label>Search <input name="q" value="{{ filters.q }}" placeholder="hostname, asset ID, owner"></label>
+    <label>Criticality <select name="criticality"><option value="">All</option>{% for value, label in criticalities %}<option value="{{ value }}" {% if filters.criticality == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+    <label>Risk <select name="risk_level"><option value="">All</option>{% for value, label in risk_levels %}<option value="{{ value }}" {% if filters.risk_level == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+    <button type="submit">Filter</button>
+  </form>
+</div>
+{% if can_manage_view %}
+<div class="card">
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="reassess-all"><button type="submit">Reassess all active assets</button></form>
+</div>
+{% endif %}
+<h2>Assets</h2>
+{% for asset in assets %}
+<div class="card">
+  <h3>{{ asset.hostname }} <span class="small">{{ asset.asset_id }}</span></h3>
+  <p class="small">{{ asset.asset_type }} | {{ asset.environment }} | {{ asset.business_criticality }} | {{ asset.status }} | Internet exposed: {{ asset.internet_exposed }}</p>
+  <p><strong>IPs:</strong> {{ asset.ip_addresses|join:", " }} | <strong>Owner:</strong> {{ asset.owner|default:"Unassigned" }}</p>
+  <p><strong>Risk:</strong> <span class="badge {{ asset.latest_level|lower }}">{{ asset.latest_level }}</span> {{ asset.latest_score|default_if_none:"" }} | <strong>Last assessed:</strong> {{ asset.latest_assessed_at|default:"Never" }}</p>
+  <p><strong>Tags:</strong> {{ asset.tags|join:", " }}</p>
+  {% if can_manage_view %}
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="assess"><input type="hidden" name="asset_id" value="{{ asset.id }}"><button type="submit">Assess now</button></form>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="create-incident"><input type="hidden" name="asset_id" value="{{ asset.id }}"><button type="submit">Create incident</button></form>
+  {% endif %}
+</div>
+{% empty %}<div class="card">No assets match the current filters.</div>{% endfor %}
+<h2>Open and Recent Vulnerabilities</h2>
+{% for vulnerability in vulnerabilities %}
+<div class="card">
+  <h3>{{ vulnerability.cve }} on {{ vulnerability.asset.hostname }}</h3>
+  <p class="small">{{ vulnerability.severity }} | CVSS {{ vulnerability.cvss_score }} | {{ vulnerability.status }} | Exploit available: {{ vulnerability.exploit_available }}</p>
+  <p>{{ vulnerability.title }}</p>
+  {% if can_manage_view %}
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="set-status"><input type="hidden" name="vulnerability_id" value="{{ vulnerability.id }}"><select name="status">{% for value, label in vulnerability_statuses %}<option value="{{ value }}" {% if value == vulnerability.status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><button type="submit">Update status</button></form>
+  {% endif %}
+</div>
+{% empty %}<div class="card">No vulnerabilities recorded yet.</div>{% endfor %}
+{% endblock %}
